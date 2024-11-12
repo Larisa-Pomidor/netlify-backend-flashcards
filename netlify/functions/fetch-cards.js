@@ -1,34 +1,52 @@
+require('dotenv').config({ path: '../.env' }); // Load environment variables
+
 const { Client } = require('pg');
 
-exports.handler = async (event, context) => {
-  const client = new Client({
-    user: process.env.DB_USER,      
-    host: process.env.DB_HOST,      
-    database: process.env.DB_NAME,   
+const client = new Client({
+    user: process.env.DB_USER,
+    host: process.env.DB_HOST,
+    database: process.env.DB_NAME,
     password: process.env.DB_PASSWORD,
-    port: 5432,  
+    port: process.env.DB_PORT || 5432,
     ssl: {
-        rejectUnauthorized: false
-    }                    
-  });
+        rejectUnauthorized: false, // This is important if you have self-signed certificates
+    },
+});
 
-  try {
-    await client.connect(); 
-    console.log("Connected to the database");
+exports.handler = async (event, context) => {
+    const headers = {
+        'Access-Control-Allow-Origin': '*', // Allow access from any origin
+        'Access-Control-Allow-Headers': 'Content-Type',
+        'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+    };
 
-    const res = await client.query('SELECT * FROM cards'); 
-    return {
-      statusCode: 200,
-      body: JSON.stringify(res.rows),
-    };
-  } catch (error) {
-    console.error("Error fetching data:", error);
-    return {
-      statusCode: 500,
-      body: `Error fetching data: ${error.message}`,
-    };
-  } finally {
-    await client.end(); 
-    console.log("Disconnected from the database");
-  }
+    if (event.httpMethod === 'OPTIONS') {
+        return {
+            statusCode: 200,
+            headers,
+            body: '',
+        };
+    }
+
+    try {
+        await client.connect(); // Connect to the database
+        console.log("Connected to the database"); // Log connection success
+
+        const res = await client.query('SELECT * FROM cards'); // Query the cards table
+        return {
+            statusCode: 200,
+            headers,
+            body: JSON.stringify(res.rows), // Return the rows as JSON
+        };
+    } catch (error) {
+        console.error("Error fetching data:", error); // Log errors
+        return {
+            statusCode: 500,
+            headers,
+            body: `Error fetching data: ${error.message}`, // Return error message
+        };
+    } finally {
+        await client.end(); // Close the database connection
+        console.log("Disconnected from the database"); // Log disconnection
+    }
 };
