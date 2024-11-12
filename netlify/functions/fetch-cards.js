@@ -1,5 +1,3 @@
-require('dotenv').config({ path: '../.env' }); // Load environment variables
-
 const { Client } = require('pg');
 
 const client = new Client({
