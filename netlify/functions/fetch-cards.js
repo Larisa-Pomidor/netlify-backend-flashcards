@@ -28,23 +28,23 @@ exports.handler = async (event, context) => {
 
     try {
         if (event.httpMethod === 'GET') {
-            const queryParams = event.queryStringParameters || {};
+            // const queryParams = event.queryStringParameters || {};
 
-            if (queryParams.option) {
-                const res = await client.query('SELECT * FROM cards WHERE cards.score < 0');
-                return {
-                    statusCode: 200,
-                    headers,
-                    body: JSON.stringify(res.rows),
-                };
-            } else {
+            // if (queryParams.option) {
+            //     const res = await client.query('SELECT * FROM cards WHERE cards.score < 0');
+            //     return {
+            //         statusCode: 200,
+            //         headers,
+            //         body: JSON.stringify(res.rows),
+            //     };
+            // } else {
                 const res = await client.query('SELECT * FROM cards');
                 return {
                     statusCode: 200,
                     headers,
                     body: JSON.stringify(res.rows),
                 };
-            }
+           // }
         } else if (event.httpMethod === 'PATCH') {
             const { front, back, image, score, example, pronunciation, id } = JSON.parse(event.body);
             const query = 'UPDATE rules SET front = $1, back = $2, image_url = $3, score = $4, example = $5, pronunciation = $6 WHERE id = $7 RETURNING *';
