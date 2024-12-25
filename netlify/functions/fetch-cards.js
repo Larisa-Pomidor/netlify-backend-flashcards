@@ -50,8 +50,17 @@ exports.handler = async (event, context) => {
         }
         else if (event.httpMethod === 'PATCH') {
             const { front, back, image, score, example, pronunciation, id } = JSON.parse(event.body);
-            const query = 'UPDATE rules SET front = $1, back = $2, image_url = $3, score = $4, example = $5, pronunciation = $6 WHERE id = $7 RETURNING *';
-            const values = [id, front, back, image, score, example, pronunciation];
+
+            let query;
+            let values;
+
+            if (front === undefined && back === undefined && image === undefined && example === undefined && pronunciation === undefined) {
+                query = 'UPDATE rules SET score = $2 WHERE id = $1 RETURNING *';
+                values = [id, score];
+            } else {
+                query = 'UPDATE rules SET front = $1, back = $2, image_url = $3, score = $4, example = $5, pronunciation = $6 WHERE id = $7 RETURNING *';
+                values = [id, front, back, image, score, example, pronunciation];
+            }
 
             const res = await client.query(query, values);
 
