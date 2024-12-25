@@ -68,7 +68,7 @@ exports.handler = async (event, context) => {
                 return {
                     statusCode: 404,
                     headers,
-                    message: 'No matching record found to update',
+                    body: JSON.stringify({ message: 'No matching record found to update' })
                 };
             }
 
