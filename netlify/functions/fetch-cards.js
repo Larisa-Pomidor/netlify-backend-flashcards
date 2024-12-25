@@ -15,7 +15,7 @@ exports.handler = async (event, context) => {
     const headers = {
         'Access-Control-Allow-Origin': '*',
         'Access-Control-Allow-Headers': 'Content-Type',
-        'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+        'Access-Control-Allow-Methods': 'GET, POST, PATCH, OPTIONS',
     };
 
     if (event.httpMethod === 'OPTIONS') {
@@ -59,7 +59,7 @@ exports.handler = async (event, context) => {
                     body: 'No matching record found to update',
                 };
             }
-            
+
             return {
                 statusCode: 200,
                 headers,
