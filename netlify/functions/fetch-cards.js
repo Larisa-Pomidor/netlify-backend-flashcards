@@ -59,7 +59,7 @@ exports.handler = async (event, context) => {
                 values = [id, score];
             } else {
                 query = 'UPDATE rules SET front = $1, back = $2, image_url = $3, score = $4, example = $5, pronunciation = $6 WHERE id = $7 RETURNING *';
-                values = [id, front, back, image, score, example, pronunciation];
+                values = [front, back, image, score, example, pronunciation, id];
             }
 
             const res = await client.query(query, values);
