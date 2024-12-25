@@ -55,10 +55,10 @@ exports.handler = async (event, context) => {
             let values;
 
             if (front === undefined && back === undefined && image === undefined && example === undefined && pronunciation === undefined) {
-                query = 'UPDATE rules SET score = $2 WHERE id = $1 RETURNING *';
+                query = 'UPDATE cards SET score = $2 WHERE id = $1 RETURNING *';
                 values = [id, score];
             } else {
-                query = 'UPDATE rules SET front = $1, back = $2, image_url = $3, score = $4, example = $5, pronunciation = $6 WHERE id = $7 RETURNING *';
+                query = 'UPDATE cards SET front = $1, back = $2, image_url = $3, score = $4, example = $5, pronunciation = $6 WHERE id = $7 RETURNING *';
                 values = [front, back, image, score, example, pronunciation, id];
             }
 
@@ -68,7 +68,7 @@ exports.handler = async (event, context) => {
                 return {
                     statusCode: 404,
                     headers,
-                    body: 'No matching record found to update',
+                    body: query.id + 'No matching record found to update',
                 };
             }
 
