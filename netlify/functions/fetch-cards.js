@@ -1,16 +1,5 @@
 const { Client } = require('pg');
 
-const client = new Client({
-    user: process.env.DB_USER,
-    host: process.env.DB_HOST,
-    database: process.env.DB_NAME,
-    password: process.env.DB_PASSWORD,
-    port: process.env.DB_PORT || 5432,
-    ssl: {
-        rejectUnauthorized: false, // This is important if you have self-signed certificates
-    },
-});
-
 exports.handler = async (event, context) => {
     const client = new Client({
         user: process.env.DB_USER,
@@ -19,12 +8,12 @@ exports.handler = async (event, context) => {
         password: process.env.DB_PASSWORD,
         port: process.env.DB_PORT || 5432,
         ssl: {
-            rejectUnauthorized: false, // This is important if you have self-signed certificates
+            rejectUnauthorized: false,
         },
     });
-    
+
     const headers = {
-        'Access-Control-Allow-Origin': '*', // Allow access from any origin
+        'Access-Control-Allow-Origin': '*',
         'Access-Control-Allow-Headers': 'Content-Type',
         'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
     };
@@ -38,24 +27,46 @@ exports.handler = async (event, context) => {
     }
 
     try {
-        await client.connect(); // Connect to the database
-        console.log("Connected to the database"); // Log connection success
+        if (event.httpMethod === 'GET') {
+            const queryParams = event.queryStringParameters || {};
 
-        const res = await client.query('SELECT * FROM cards'); // Query the cards table
-        return {
-            statusCode: 200,
-            headers,
-            body: JSON.stringify(res.rows), // Return the rows as JSON
-        };
+            if (queryParams.option) {
+                const res = await client.query('SELECT * FROM rules WHERE rules.score < 0');
+                return {
+                    statusCode: 200,
+                    headers,
+                    body: JSON.stringify(res.rows[0] || {}),
+                };
+            } else {
+                const res = await client.query('SELECT * FROM cards');
+                return {
+                    statusCode: 200,
+                    headers,
+                    body: JSON.stringify(res.rows),
+                };
+            }
+        } else if (event.httpMethod === 'PATCH') {
+            const { front, back, image, score, example, pronunciation } = JSON.parse(event.body);
+            const query = 'UPDATE rules SET front = $1, back = $2, image_url = $3, score = $4, example = $5, pronunciation = $6';
+            const values = [front, back, image, score, example, pronunciation];
+
+            const res = await client.query(query, values);
+            return {
+                statusCode: 200,
+                headers,
+                body: JSON.stringify(res.rows[0]),
+            };
+        }
+
     } catch (error) {
-        console.error("Error fetching data:", error); // Log errors
+        console.error("Error fetching data:", error);
         return {
             statusCode: 500,
             headers,
-            body: `Error fetching data: ${error.message}`, // Return error message
+            body: `Error fetching data: ${error.message}`,
         };
     } finally {
-        await client.end(); // Close the database connection
-        console.log("Disconnected from the database"); // Log disconnection
+        await client.end();
+        console.log("Disconnected from the database");
     }
 };
