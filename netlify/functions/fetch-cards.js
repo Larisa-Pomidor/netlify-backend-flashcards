@@ -45,27 +45,28 @@ exports.handler = async (event, context) => {
                     body: JSON.stringify(res.rows),
                 };
            // }
-        } else if (event.httpMethod === 'PATCH') {
-            const { front, back, image, score, example, pronunciation, id } = JSON.parse(event.body);
-            const query = 'UPDATE rules SET front = $1, back = $2, image_url = $3, score = $4, example = $5, pronunciation = $6 WHERE id = $7 RETURNING *';
-            const values = [id, front, back, image, score, example, pronunciation];
+        } 
+        // else if (event.httpMethod === 'PATCH') {
+        //     const { front, back, image, score, example, pronunciation, id } = JSON.parse(event.body);
+        //     const query = 'UPDATE rules SET front = $1, back = $2, image_url = $3, score = $4, example = $5, pronunciation = $6 WHERE id = $7 RETURNING *';
+        //     const values = [id, front, back, image, score, example, pronunciation];
 
-            const res = await client.query(query, values);
+        //     const res = await client.query(query, values);
 
-            if (res.rows.length === 0) {
-                return {
-                    statusCode: 404,
-                    headers,
-                    body: 'No matching record found to update',
-                };
-            }
+        //     if (res.rows.length === 0) {
+        //         return {
+        //             statusCode: 404,
+        //             headers,
+        //             body: 'No matching record found to update',
+        //         };
+        //     }
 
-            return {
-                statusCode: 200,
-                headers,
-                body: JSON.stringify(res.rows[0]),
-            };
-        }
+        //     return {
+        //         statusCode: 200,
+        //         headers,
+        //         body: JSON.stringify(res.rows[0]),
+        //     };
+        // }
 
     } catch (error) {
         console.error("Error fetching data:", error);
