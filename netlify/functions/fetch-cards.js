@@ -33,11 +33,11 @@ exports.handler = async (event, context) => {
             const queryParams = event.queryStringParameters || {};
 
             if (queryParams.quantity) {
-                let res;
+                let result;
                 if (queryParams.option === "selected") {
-                    res = await client.query('SELECT COUNT(*) FROM cards WHERE cards.score < 0');
+                    result = await client.query('SELECT COUNT(*) FROM cards WHERE cards.score < 0');
                 } else {
-                    res = await client.query('SELECT COUNT(*) FROM cards');
+                    result = await client.query('SELECT COUNT(*) FROM cards');
                 }
                 return {
                     statusCode: 200,
