@@ -42,7 +42,7 @@ exports.handler = async (event, context) => {
                 return {
                     statusCode: 200,
                     headers,
-                    body: JSON.stringify({ count: result })
+                    body: JSON.stringify({ count: result.rows[0].count })
                 };
             }
 
