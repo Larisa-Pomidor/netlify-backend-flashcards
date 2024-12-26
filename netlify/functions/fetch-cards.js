@@ -98,7 +98,7 @@ exports.handler = async (event, context) => {
         return {
             statusCode: 500,
             headers,
-            body: `Error fetching data: ${error.message}`,
+            body: JSON.stringify({ message: `Error fetching data: ${error.message}` })
         };
     } finally {
         await client.end();
