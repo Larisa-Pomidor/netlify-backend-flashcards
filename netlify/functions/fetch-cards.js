@@ -32,12 +32,26 @@ exports.handler = async (event, context) => {
         if (event.httpMethod === 'GET') {
             const queryParams = event.queryStringParameters || {};
 
-            if (queryParams.option) {
+            if (queryParams.quantity) {
+                let res;
+                if (queryParams.option === "selected") {
+                    res = await client.query('SELECT COUNT(*) FROM cards WHERE cards.score < 0');
+                } else {
+                    res = await client.query('SELECT COUNT(*) FROM cards');
+                }
+                return {
+                    statusCode: 200,
+                    headers,
+                    body: JSON.stringify({ count: result })
+                };
+            }
+
+            else if (queryParams.option === "selected") {
                 const res = await client.query('SELECT * FROM cards WHERE cards.score < 0');
                 return {
                     statusCode: 200,
                     headers,
-                    body: JSON.stringify(res.rows),
+                    body: JSON.stringify(res.rows)
                 };
             } else {
                 const res = await client.query('SELECT * FROM cards');
