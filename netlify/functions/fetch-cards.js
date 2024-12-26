@@ -46,21 +46,21 @@ exports.handler = async (event, context) => {
                 };
             }
 
-            // else if (queryParams.option === "selected") {
-            //     const res = await client.query('SELECT * FROM cards WHERE cards.score < 0');
-            //     return {
-            //         statusCode: 200,
-            //         headers,
-            //         body: JSON.stringify(res.rows)
-            //     };
-            // } else {
-            //     const res = await client.query('SELECT * FROM cards');
-            //     return {
-            //         statusCode: 200,
-            //         headers,
-            //         body: JSON.stringify(res.rows),
-            //     };
-            // }
+            else if (queryParams.option === "selected") {
+                const res = await client.query('SELECT * FROM cards WHERE cards.score < 0');
+                return {
+                    statusCode: 200,
+                    headers,
+                    body: JSON.stringify(res.rows)
+                };
+            } else {
+                const res = await client.query('SELECT * FROM cards');
+                return {
+                    statusCode: 200,
+                    headers,
+                    body: JSON.stringify(res.rows),
+                };
+            }
         }
         else if (event.httpMethod === 'PATCH') {
             const { front, back, image, score, example, pronunciation, id } = JSON.parse(event.body);
