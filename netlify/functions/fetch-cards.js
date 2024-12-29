@@ -92,6 +92,23 @@ exports.handler = async (event, context) => {
                 body: JSON.stringify(res.rows[0]),
             };
         }
+        else if (event.httpMethod === 'POST') {
+            const { front, back, image, score = 0, example, pronunciation } = JSON.parse(event.body);
+
+            const query = `
+                INSERT INTO cards (front, back, image_url, score, example, pronunciation)
+                VALUES ($1, $2, $3, $4, $5, $6)
+                RETURNING *`;
+
+            const values = [front, back, image, score, example, pronunciation];
+            const res = await client.query(query, values);
+
+            return {
+                statusCode: 201,
+                headers,
+                body: JSON.stringify(res.rows[0]),
+            };
+        }
 
     } catch (error) {
         console.error("Error fetching data:", error);
