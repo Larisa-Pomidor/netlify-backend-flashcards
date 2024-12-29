@@ -68,7 +68,7 @@ exports.handler = async (event, context) => {
             let query;
             let values;
 
-            if (front === undefined && back === undefined && image === undefined && example === undefined && pronunciation === undefined) {
+            if (!front && !back) {
                 query = 'UPDATE cards SET score = $2 WHERE id = $1 RETURNING *';
                 values = [id, score];
             } else {
