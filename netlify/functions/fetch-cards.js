@@ -110,6 +110,26 @@ exports.handler = async (event, context) => {
             };
         }
 
+        else if (event.httpMethod === 'DELETE') {
+            const id = event.path.split('/').pop(); 
+
+            const res = await client.query('DELETE FROM cards WHERE id = $1 RETURNING *', [id]);
+
+            if (res.rows.length === 0) {
+                return {
+                    statusCode: 404,
+                    headers,
+                    body: JSON.stringify({ message: 'Item not found' }),
+                };
+            }
+
+            return {
+                statusCode: 200,
+                headers,
+                body: JSON.stringify({ message: 'Item deleted successfully', item: res.rows[0] }),
+            };
+        }
+
     } catch (error) {
         console.error("Error fetching data:", error);
         return {
