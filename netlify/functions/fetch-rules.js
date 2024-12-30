@@ -68,7 +68,7 @@ exports.handler = async (event, context) => {
             let query;
             let values;
 
-            if (!front && !back) {
+            if (!name && !description) {
                 query = 'UPDATE rules SET score = $2 WHERE id = $1 RETURNING *';
                 values = [id, score];
             } else {
