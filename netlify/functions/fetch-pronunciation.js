@@ -93,7 +93,7 @@ exports.handler = async (event, context) => {
             };
         }
         else if (event.httpMethod === 'POST') {
-            const { name, description, score = 0 } = JSON.parse(event.body);
+            const { word, transcription, score = 0 } = JSON.parse(event.body);
 
             const query = `
                 INSERT INTO pronunciation (word, transcription, score)
