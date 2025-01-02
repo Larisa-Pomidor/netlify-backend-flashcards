@@ -63,7 +63,7 @@ exports.handler = async (event, context) => {
             }
         }
         else if (event.httpMethod === 'PATCH') {
-            const { word, score, id } = JSON.parse(event.body);
+            const { word, translation, score, id } = JSON.parse(event.body);
 
             let query;
             let values;
@@ -72,8 +72,8 @@ exports.handler = async (event, context) => {
                 query = 'UPDATE spelling SET score = $2 WHERE id = $1 RETURNING *';
                 values = [id, score];
             } else {
-                query = 'UPDATE spelling SET word = $1, score = $2 WHERE id = $3 RETURNING *';
-                values = [word, score, id];
+                query = 'UPDATE spelling SET word = $1, translation = $2, score = $3 WHERE id = $4 RETURNING *';
+                values = [word, translation, score, id];
             }
 
             const res = await client.query(query, values);
@@ -96,7 +96,7 @@ exports.handler = async (event, context) => {
             const { word, score = 0 } = JSON.parse(event.body);
 
             const query = `
-                INSERT INTO spelling (word, score)
+                INSERT INTO spelling (word, translation, score)
                 VALUES ($1, $2, $3)
                 RETURNING *`;
 
