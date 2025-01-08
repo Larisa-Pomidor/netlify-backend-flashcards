@@ -93,7 +93,7 @@ exports.handler = async (event, context) => {
             };
         }
         else if (event.httpMethod === 'POST') {
-            const { word, translation, score = 0 } = JSON.parse(event.body);
+            const { word, translation, score = -1000 } = JSON.parse(event.body);
 
             const query = `
                 INSERT INTO spelling (word, translation, score)

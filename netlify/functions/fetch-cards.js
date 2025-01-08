@@ -93,7 +93,7 @@ exports.handler = async (event, context) => {
             };
         }
         else if (event.httpMethod === 'POST') {
-            const { front, back, image, score = 0, example, pronunciation } = JSON.parse(event.body);
+            const { front, back, image, score = -1000, example, pronunciation } = JSON.parse(event.body);
 
             const query = `
                 INSERT INTO cards (front, back, image_url, score, example, pronunciation)
