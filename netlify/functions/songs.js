@@ -34,16 +34,17 @@ exports.handler = async (event, context) => {
 
             const res = await client.query
                 (`
-                SELECT songs.id, songs.name, songs.admin_rating, songs.performance, songs.created_at,
-                CAST(ROUND(AVG(user_songs.rating)) AS INTEGER) AS currentRating, songs.remark,
-                author.id AS author_id, author.name AS author_name,
-                lyrics.id AS lyrics_id, lyrics.code AS lyrics_code, lyrics.text AS lyrics_text
-                FROM songs
-                LEFT OUTER JOIN authors AS author ON songs.author_id = author.id
-                LEFT OUTER JOIN user_songs ON songs.id = user_songs.song_id
-                LEFT OUTER JOIN lyrics ON songs.id = lyrics.song_id
-                GROUP BY songs.id, author.id, lyrics.id;
-            `);
+                SELECT DISTINCT ON (songs.id)
+                    songs.id, songs.name, songs.admin_rating, songs.performance, songs.created_at,
+                    CAST(ROUND(AVG(user_songs.rating)) AS INTEGER) AS currentRating, songs.remark,
+                    author.id AS author_id, author.name AS author_name,
+                    lyrics.id AS lyrics_id, lyrics.code AS lyrics_code, lyrics.text AS lyrics_text
+                        FROM songs
+                            LEFT JOIN authors AS author ON songs.author_id = author.id
+                            LEFT JOIN user_songs ON songs.id = user_songs.song_id
+                            LEFT JOIN lyrics ON songs.id = lyrics.song_id
+                            GROUP BY songs.id, author.id, lyrics.id;
+                `);
             return {
                 statusCode: 200,
                 headers,
