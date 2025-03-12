@@ -59,39 +59,42 @@ exports.handler = async (event, context) => {
                 body: JSON.stringify(res.rows),
             };
         }
+        else if (event.httpMethod === 'POST') {
+            const segments = path.split('/').filter(Boolean);
+            const optionId = segments[segments.length - 1];
+            const option = segments[segments.length - 2];
+            const dayId = segments[segments.length - 3];
+
+            const query = `
+                INSERT INTO $1 (day_id, $2)
+                VALUES ($3, $4)
+                RETURNING *
+            `;
+
+            const values = [`${option}s`, `${option}_id`, dayId, optionId];
+            const res = await client.query(query, values);
+
+            const optionQuery = `
+                SELECT FROM $1 WHERE $1.id = $2;
+            `;
+
+            const optionValues = [`${option}s`, res.rows[0][`${option}_id`]];
+            const optionRes = await client.query(optionQuery, optionValues);
+
+            return {
+                statusCode: 201,
+                headers,
+                body: JSON.stringify(optionRes),
+            };
+        }
         else if (event.httpMethod === 'PUT') {
             const id = event.path.split('/').pop();
 
-            const { description, productId, symptomId } = JSON.parse(event.body);
+            const { description } = JSON.parse(event.body);
 
-            let query = '';
-            let values = []
+            query = `UPDATE days SET note = $1 WHERE id = $2 RETURNING *`;
 
-            if (description) {
-                query = `UPDATE days SET note = $1 WHERE id = $2 RETURNING *`;
-
-                values = [description, id];
-
-            } else if (productId) {
-                query = `
-                    INSERT INTO day_products (day_id, product_id)
-                    VALUES ($1, $2)
-                    RETURNING *
-                `;
-
-                values = [id, productId];
-            }
-            else if (symptomId) {
-                query = `
-                    INSERT INTO day_symptoms (day_id, symptom_id)
-                    VALUES ($1, $2)
-                    RETURNING *
-                `;
-
-                values = [id, symptomId];
-            }
-
-
+            values = [description, id];
             const res = await client.query(query, values);
 
             return {
