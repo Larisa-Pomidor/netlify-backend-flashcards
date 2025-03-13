@@ -41,10 +41,10 @@ exports.handler = async (event, context) => {
                     type.name AS type,
                     COALESCE(json_agg(
                         DISTINCT jsonb_build_object('id', symptoms.id, 'name', symptoms.name)
-                    ) FILTER (WHERE symptoms.id IS NOT NULL), '[]') AS symptom,
+                    ) FILTER (WHERE symptoms.id IS NOT NULL), '[]') AS symptoms,
                     COALESCE(json_agg(
                         DISTINCT jsonb_build_object('id', products.id, 'name', products.name, 'imageUrl', products.image_url)
-                    ) FILTER (WHERE products.id IS NOT NULL), '[]') AS product
+                    ) FILTER (WHERE products.id IS NOT NULL), '[]') AS products
                 FROM days
                 INNER JOIN types AS type ON days.type_id = type.id
                 LEFT JOIN day_symptoms ON days.id = day_symptoms.day_id
