@@ -34,24 +34,24 @@ exports.handler = async (event, context) => {
 
             const res = await client.query
                 (`
-                SELECT day.id, day.date, day.note, type.name as type, 
+                SELECT
+                    days.id,
+                    days.date,
+                    days.note,
+                    type.name AS type,
                     COALESCE(json_agg(
-                        DISTINCT jsonb_build_object('id', symptom.id, 'name', symptom.name)
-                    ) FILTER (WHERE symptoms.id IS NOT NULL), '[]') AS symptom
-                    
+                        DISTINCT jsonb_build_object('id', symptoms.id, 'name', symptoms.name)
+                    ) FILTER (WHERE symptoms.id IS NOT NULL), '[]') AS symptom,
                     COALESCE(json_agg(
-                        DISTINCT jsonb_build_object('id', product.id, 'name', product.name, 'imageUrl', 'product_url')
+                        DISTINCT jsonb_build_object('id', products.id, 'name', products.name, 'imageUrl', products.image_url)
                     ) FILTER (WHERE products.id IS NOT NULL), '[]') AS product
-
-                        FROM days
-                        INNER JOIN types as type ON days.type_id = type.id
-
-                        INNER JOIN day_symptoms ON days.id = day_symptoms.day_id
-                        INNER JOIN symptoms ON symptoms.id = day_symptoms.symptom_id
-
-                        INNER JOIN day_products ON days.id = day_products.day_id
-                        INNER JOIN products ON products.id = day_products.product_id
-                        GROUP BY days.id, type.id;
+                FROM days
+                INNER JOIN types AS type ON days.type_id = type.id
+                LEFT JOIN day_symptoms ON days.id = day_symptoms.day_id
+                LEFT JOIN symptoms ON symptoms.id = day_symptoms.symptom_id
+                LEFT JOIN day_products ON days.id = day_products.day_id
+                LEFT JOIN products ON products.id = day_products.product_id
+                GROUP BY days.id, type.id;
                 `);
             return {
                 statusCode: 200,
