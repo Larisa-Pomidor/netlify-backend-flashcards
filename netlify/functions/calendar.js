@@ -130,7 +130,7 @@ exports.handler = async (event, context) => {
             const tableNameSingular = `${option}s`;
 
             const optionQuery = `
-                SELECT id, name, image_url as imgUrl FROM ${tableNameSingular} WHERE ${tableNameSingular}.id = $1;
+                SELECT id, name, image_url as "imgUrl" FROM ${tableNameSingular} WHERE ${tableNameSingular}.id = $1;
             `;
 
             const optionValues = [res.rows[0][`${option}_id`]];
