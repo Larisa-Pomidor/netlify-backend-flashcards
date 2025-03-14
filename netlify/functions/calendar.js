@@ -33,6 +33,7 @@ exports.handler = async (event, context) => {
         let query = '';
 
         if (event.httpMethod === 'GET') {
+            console.log(event.pathParameters)
             if (event.pathParameters && event.pathParameters.id) {
                 query = `
                     SELECT
