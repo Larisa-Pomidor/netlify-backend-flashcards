@@ -33,8 +33,11 @@ exports.handler = async (event, context) => {
         let query = '';
 
         if (event.httpMethod === 'GET') {
-            console.log(event.pathParameters)
-            if (event.pathParameters && event.pathParameters.id) {
+            const optionalId = Number(event.path.split('/').pop());
+            const isId = Number.isInteger(optionalId);
+            console.log(optionalId, isId)
+            
+            if (isId) {
                 query = `
                     SELECT
                         days.id,
@@ -56,7 +59,7 @@ exports.handler = async (event, context) => {
                     WHERE days.id = $1
                     GROUP BY days.id, type.id;
                 `;
-                queryParams = [event.pathParameters.id];
+                queryParams = [optionalId];
 
                 const res = await client.query(query, queryParams);
 
