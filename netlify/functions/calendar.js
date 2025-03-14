@@ -115,7 +115,7 @@ exports.handler = async (event, context) => {
                 };
             }
 
-            const tableName = `${option}s`;
+            const tableName = `day_${option}s`;
             const columnName = `${option}_id`;
 
             const query = `
@@ -127,8 +127,10 @@ exports.handler = async (event, context) => {
             const values = [dayId, optionId];
             const res = await client.query(query, values);
 
+            const tableNameSingular = `${option}s`;
+
             const optionQuery = `
-                SELECT FROM ${tableName} WHERE ${tableName}.id = $1;
+                SELECT FROM ${tableNameSingular} WHERE ${tableNameSingular}.id = $1;
             `;
 
             const optionValues = [res.rows[0][`${option}_id`]];
