@@ -61,9 +61,7 @@ exports.handler = async (event, context) => {
 
                 return {
                     statusCode: 200,
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
+                    headers,
                     body: JSON.stringify(res.rows[0]),
                 };
 
@@ -93,9 +91,7 @@ exports.handler = async (event, context) => {
 
                 return {
                     statusCode: 200,
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
+                    headers,
                     body: JSON.stringify(res.rows),
                 };
             }
