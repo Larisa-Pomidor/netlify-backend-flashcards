@@ -173,16 +173,6 @@ exports.handler = async (event, context) => {
             const option = segments[segments.length - 2];
             const dayId = segments[segments.length - 3];
 
-            if (!ALLOWED_OPTIONS.includes(option)) {
-                return {
-                    statusCode: 400,
-                    headers,
-                    body: JSON.stringify({ error: "Invalid option type" }),
-                };
-            }
-
-            const id = event.path.split('/').pop();
-
             let res;
 
             if (option === 'symptom')
@@ -194,7 +184,7 @@ exports.handler = async (event, context) => {
                 return {
                     statusCode: 404,
                     headers,
-                    body: JSON.stringify({ message: `${option} with id ${id} not found` }),
+                    body: JSON.stringify({ message: `${option} with id ${optionId} not found` }),
                 };
             }
 
