@@ -167,17 +167,28 @@ exports.handler = async (event, context) => {
             };
         }
         else if (event.httpMethod === 'DELETE') {
+
             const segments = event.path.split('/').filter(Boolean);
+            const optionId = segments[segments.length - 1];
             const option = segments[segments.length - 2];
+            const dayId = segments[segments.length - 3];
+
+            if (!ALLOWED_OPTIONS.includes(option)) {
+                return {
+                    statusCode: 400,
+                    headers,
+                    body: JSON.stringify({ error: "Invalid option type" }),
+                };
+            }
 
             const id = event.path.split('/').pop();
 
             let res;
 
             if (option === 'symptom')
-                res = await client.query('DELETE FROM day_symptoms WHERE id = $1 RETURNING *', [id]);
+                res = await client.query('DELETE FROM day_symptoms WHERE day_id = $1 AND symptom_id = $2 RETURNING *', [dayId, optionId]);
             else if (option === 'product')
-                res = await client.query('DELETE FROM day_products WHERE id = $1 RETURNING *', [id]);
+                res = await client.query('DELETE FROM day_products WHERE day_id = $1 AND product_id = $2 RETURNING *', [dayId, optionId]);
 
             if (res?.rows?.length === 0) {
                 return {
