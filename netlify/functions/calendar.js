@@ -130,7 +130,7 @@ exports.handler = async (event, context) => {
             const tableNameSingular = `${option}s`;
 
             const optionQuery = `
-                SELECT FROM ${tableNameSingular} WHERE ${tableNameSingular}.id = $1;
+                SELECT * FROM ${tableNameSingular} WHERE ${tableNameSingular}.id = $1;
             `;
 
             const optionValues = [res.rows[0][`${option}_id`]];
@@ -139,7 +139,7 @@ exports.handler = async (event, context) => {
             return {
                 statusCode: 201,
                 headers,
-                body: JSON.stringify(optionRes),
+                body: JSON.stringify(optionRes.rows[0]),
             };
         }
         else if (event.httpMethod === 'PUT') {
