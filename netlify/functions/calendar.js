@@ -129,9 +129,17 @@ exports.handler = async (event, context) => {
 
             const tableNameSingular = `${option}s`;
 
-            const optionQuery = `
+            let optionQuery;
+
+            if (option === 'product') {
+                optionQuery = `
                 SELECT id, name, image_url as "imgUrl" FROM ${tableNameSingular} WHERE ${tableNameSingular}.id = $1;
             `;
+            } else {
+                optionQuery = `
+                SELECT * FROM ${tableNameSingular} WHERE ${tableNameSingular}.id = $1;
+            `;
+            }
 
             const optionValues = [res.rows[0][`${option}_id`]];
             const optionRes = await client.query(optionQuery, optionValues);
