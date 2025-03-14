@@ -35,7 +35,7 @@ exports.handler = async (event, context) => {
         if (event.httpMethod === 'GET') {
             const optionalId = Number(event.path.split('/').pop());
             const isId = Number.isInteger(optionalId);
-            
+
             if (isId) {
                 query = `
                     SELECT
@@ -100,25 +100,38 @@ exports.handler = async (event, context) => {
             }
         }
         else if (event.httpMethod === 'POST') {
+            const ALLOWED_OPTIONS = ['symptom', 'product'];
+
             const segments = event.path.split('/').filter(Boolean);
             const optionId = segments[segments.length - 1];
             const option = segments[segments.length - 2];
             const dayId = segments[segments.length - 3];
 
+            if (!ALLOWED_OPTIONS.includes(option)) {
+                return {
+                    statusCode: 400,
+                    headers,
+                    body: JSON.stringify({ error: "Invalid option type" }),
+                };
+            }
+
+            const tableName = `${option}s`;
+            const columnName = `${option}_id`;
+
             const query = `
-                INSERT INTO $1 (day_id, $2)
-                VALUES ($3, $4)
+                INSERT INTO ${tableName} (day_id, ${columnName})
+                VALUES ($1, $2)
                 RETURNING *
             `;
 
-            const values = [`${option}s`, `${option}_id`, dayId, optionId];
+            const values = [dayId, optionId];
             const res = await client.query(query, values);
 
             const optionQuery = `
-                SELECT FROM $1 WHERE $1.id = $2;
+                SELECT FROM ${tableName} WHERE ${tableName}.id = $1;
             `;
 
-            const optionValues = [`${option}s`, res.rows[0][`${option}_id`]];
+            const optionValues = [res.rows[0][`${option}_id`]];
             const optionRes = await client.query(optionQuery, optionValues);
 
             return {
