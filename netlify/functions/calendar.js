@@ -30,34 +30,75 @@ exports.handler = async (event, context) => {
         await client.connect();
         console.log("Connected to the database");
 
-        if (event.httpMethod === 'GET') {
+        let query = '';
 
-            const res = await client.query
-                (`
-                SELECT
-                    days.id,
-                    days.date,
-                    days.note,
-                    type.name AS type,
-                    COALESCE(json_agg(
-                        DISTINCT jsonb_build_object('id', symptoms.id, 'name', symptoms.name)
-                    ) FILTER (WHERE symptoms.id IS NOT NULL), '[]') AS symptoms,
-                    COALESCE(json_agg(
-                        DISTINCT jsonb_build_object('id', products.id, 'name', products.name, 'imageUrl', products.image_url)
-                    ) FILTER (WHERE products.id IS NOT NULL), '[]') AS products
-                FROM days
-                INNER JOIN types AS type ON days.type_id = type.id
-                LEFT JOIN day_symptoms ON days.id = day_symptoms.day_id
-                LEFT JOIN symptoms ON symptoms.id = day_symptoms.symptom_id
-                LEFT JOIN day_products ON days.id = day_products.day_id
-                LEFT JOIN products ON products.id = day_products.product_id
-                GROUP BY days.id, type.id;
-                `);
-            return {
-                statusCode: 200,
-                headers,
-                body: JSON.stringify(res.rows),
-            };
+        if (event.httpMethod === 'GET') {
+            if (event.pathParameters && event.pathParameters.id) {
+                query = `
+                    SELECT
+                        days.id,
+                        days.date,
+                        days.note,
+                        type.name AS type,
+                        COALESCE(json_agg(
+                            DISTINCT jsonb_build_object('id', symptoms.id, 'name', symptoms.name)
+                        ) FILTER (WHERE symptoms.id IS NOT NULL), '[]') AS symptoms,
+                        COALESCE(json_agg(
+                            DISTINCT jsonb_build_object('id', products.id, 'name', products.name, 'imageUrl', products.image_url)
+                        ) FILTER (WHERE products.id IS NOT NULL), '[]') AS products
+                    FROM days
+                    LEFT JOIN types AS type ON days.type_id = type.id
+                    LEFT JOIN day_symptoms ON days.id = day_symptoms.day_id
+                    LEFT JOIN symptoms ON symptoms.id = day_symptoms.symptom_id
+                    LEFT JOIN day_products ON days.id = day_products.day_id
+                    LEFT JOIN products ON products.id = day_products.product_id
+                    WHERE days.id = $1
+                    GROUP BY days.id, type.id;
+                `;
+                queryParams = [event.pathParameters.id];
+
+                const res = await client.query(query, queryParams);
+
+                return {
+                    statusCode: 200,
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(res.rows[0]),
+                };
+
+            } else {
+                query = `
+                    SELECT 
+                        days.id,
+                        days.date,
+                        days.note,
+                        type.name AS type,
+                        COALESCE(json_agg(
+                            DISTINCT jsonb_build_object('id', symptoms.id, 'name', symptoms.name)
+                        ) FILTER (WHERE symptoms.id IS NOT NULL), '[]') AS symptoms,
+                        COALESCE(json_agg(
+                            DISTINCT jsonb_build_object('id', products.id, 'name', products.name, 'imageUrl', products.image_url)
+                        ) FILTER (WHERE products.id IS NOT NULL), '[]') AS products
+                    FROM days
+                    LEFT JOIN types AS type ON days.type_id = type.id
+                    LEFT JOIN day_symptoms ON days.id = day_symptoms.day_id
+                    LEFT JOIN symptoms ON symptoms.id = day_symptoms.symptom_id
+                    LEFT JOIN day_products ON days.id = day_products.day_id
+                    LEFT JOIN products ON products.id = day_products.product_id
+                    GROUP BY days.id, type.id;
+                `;
+
+                const res = await client.query(query);
+
+                return {
+                    statusCode: 200,
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(res.rows),
+                };
+            }
         }
         else if (event.httpMethod === 'POST') {
             const segments = path.split('/').filter(Boolean);
