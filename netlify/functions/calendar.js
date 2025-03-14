@@ -35,7 +35,6 @@ exports.handler = async (event, context) => {
         if (event.httpMethod === 'GET') {
             const optionalId = Number(event.path.split('/').pop());
             const isId = Number.isInteger(optionalId);
-            console.log(optionalId, isId)
             
             if (isId) {
                 query = `
@@ -145,7 +144,7 @@ exports.handler = async (event, context) => {
             };
         }
         else if (event.httpMethod === 'DELETE') {
-            const segments = path.split('/').filter(Boolean);
+            const segments = event.path.split('/').filter(Boolean);
             const option = segments[segments.length - 2];
 
             const id = event.path.split('/').pop();
