@@ -100,7 +100,7 @@ exports.handler = async (event, context) => {
             }
         }
         else if (event.httpMethod === 'POST') {
-            const segments = path.split('/').filter(Boolean);
+            const segments = event.path.split('/').filter(Boolean);
             const optionId = segments[segments.length - 1];
             const option = segments[segments.length - 2];
             const dayId = segments[segments.length - 3];
