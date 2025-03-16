@@ -1,5 +1,9 @@
 const { Client } = require('pg');
 
+function getRandomInt(max) {
+    return Math.floor(Math.random() * max);
+}
+
 exports.handler = async (event, context) => {
     const client = new Client({
         user: process.env.DB_USER,
