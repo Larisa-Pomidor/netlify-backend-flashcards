@@ -64,6 +64,8 @@ exports.handler = async (event, context) => {
                 VALUES ($1, $2)
                 RETURNING *`;
 
+            const type = null;
+
             const typeList_1 = [1, 2, 3, 5];
             const typeList_2 = [1, 3];
 
@@ -93,15 +95,17 @@ exports.handler = async (event, context) => {
                     await client.query(productQuery, [dayId, beveragesList[getRandomInt(beveragesList.length)]]);
                     await client.query(productQuery, [dayId, snacks[getRandomInt(snacks.length)]]);
 
-                    const randomBreakfast = breakfastList(porridge)[getRandomInt(breakfastList.length)];
+                    const breakfastOptions = breakfastList(porridge);
+                    const randomBreakfast = breakfastOptions[getRandomInt(breakfastOptions.length)];
 
                     for (j = 0; j < randomBreakfast.length; j++) {
+                        console.log("Inserting product:", randomBreakfast[j], "Type:", typeof randomBreakfast[j]);
                         await client.query(productQuery, [dayId, randomBreakfast[j]]);
                     }
                 }
 
                 else if (currentDate.getDay() === 4 || currentDate.getDay() === 5 || currentDate.getDay() === 6) {
-                    if (currentDate.getDay() === 3) {
+                    if (currentDate.getDay() === 4) {
                         products.push(porridge);
                         products.push(meatList[getRandomInt(meatList.length)]);
                         type = typeList_1[getRandomInt(typeList_1.length)];
@@ -117,9 +121,11 @@ exports.handler = async (event, context) => {
                     await client.query(productQuery, [dayId, beveragesList[getRandomInt(beveragesList.length)]]);
                     await client.query(productQuery, [dayId, snacks[getRandomInt(snacks.length)]]);
 
-                    const randomBreakfast = breakfastList(porridge)[getRandomInt(breakfastList.length)];
+                    const breakfastOptions = breakfastList(porridge);
+                    const randomBreakfast = breakfastOptions[getRandomInt(breakfastOptions.length)];
 
                     for (j = 0; j < randomBreakfast.length; j++) {
+                        console.log("Inserting product:", randomBreakfast[j], "Type:", typeof randomBreakfast[j]);
                         await client.query(productQuery, [dayId, randomBreakfast[j]]);
                     }
                 }
@@ -149,9 +155,10 @@ exports.handler = async (event, context) => {
                     await client.query(productQuery, [dayId, beveragesList[getRandomInt(beveragesList.length)]]);
                     await client.query(productQuery, [dayId, snacks[getRandomInt(snacks.length)]]);
 
-                    const randomBreakfast = breakfastList(porridge)[getRandomInt(breakfastList.length)];
-
+                    const breakfastOptions = breakfastList(porridge);
+                    const randomBreakfast = breakfastOptions[getRandomInt(breakfastOptions.length)];
                     for (j = 0; j < randomBreakfast.length; j++) {
+                        console.log("Inserting product:", randomBreakfast[j], "Type:", typeof randomBreakfast[j]);
                         await client.query(productQuery, [dayId, randomBreakfast[j]]);
                     }
                 }
