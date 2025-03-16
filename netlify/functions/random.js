@@ -36,7 +36,7 @@ exports.handler = async (event, context) => {
 
         if (event.httpMethod === 'POST') {
             let currentDate = new Date('2025-03-25');
-            const dietLength = 4;
+            const dietLength = 7;
             //const dietLength = 40;
 
             const vegetablesList = [12, 13, 14, 15, 16, 17, 18, 28];
