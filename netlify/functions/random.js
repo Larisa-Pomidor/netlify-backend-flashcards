@@ -165,6 +165,11 @@ exports.handler = async (event, context) => {
 
                 currentDate.setDate(currentDate.getDate() + 1);
             }
+
+            return {
+                statusCode: 201,
+                headers
+            };
         }
 
     } catch (error) {
