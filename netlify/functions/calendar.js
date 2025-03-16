@@ -133,7 +133,7 @@ exports.handler = async (event, context) => {
 
             if (option === 'product') {
                 optionQuery = `
-                SELECT id, name, image_url as "imgUrl" FROM ${tableNameSingular} WHERE ${tableNameSingular}.id = $1;
+                SELECT id, name, image_url as "imageUrl" FROM ${tableNameSingular} WHERE ${tableNameSingular}.id = $1;
             `;
             } else {
                 optionQuery = `
