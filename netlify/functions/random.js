@@ -75,7 +75,7 @@ exports.handler = async (event, context) => {
 
                     const arrayLength = getRandomInt(1);
                     for (j = 0; j < arrayLength + 1; j++) {
-                        products.push([vegetablesList[getRandomInt(vegetablesList.length)]]);
+                        products.push(vegetablesList[getRandomInt(vegetablesList.length)]);
                     }
 
                     type = 6;
@@ -133,7 +133,7 @@ exports.handler = async (event, context) => {
 
                         const arrayLength = getRandomInt(1);
                         for (j = 0; j < arrayLength + 1; j++) {
-                            products.push([vegetablesList[getRandomInt(vegetablesList.length)]]);
+                            products.push(vegetablesList[getRandomInt(vegetablesList.length)]);
                         }
 
                         type = typeList_2[getRandomInt(typeList_2.length)];
