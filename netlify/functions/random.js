@@ -64,7 +64,7 @@ exports.handler = async (event, context) => {
                 VALUES ($1, $2)
                 RETURNING *`;
 
-            const type = null;
+            let type = null;
 
             const typeList_1 = [1, 2, 3, 5];
             const typeList_2 = [1, 3];
