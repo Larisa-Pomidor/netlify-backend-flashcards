@@ -60,7 +60,7 @@ exports.handler = async (event, context) => {
                 RETURNING *`;
 
             const dayQuery = `
-                INSERT INTO day (date, type_id)
+                INSERT INTO days (date, type_id)
                 VALUES ($1, $2)
                 RETURNING *`;
 
