@@ -35,7 +35,8 @@ exports.handler = async (event, context) => {
         console.log("Connected to the database");
 
         if (event.httpMethod === 'POST') {
-            const dietLength = Number(event.path.split('/').pop()) || 40;
+            // const dietLength = Number(event.path.split('/').pop()) || 40;
+            const dietLength = 40;
             let currentDate = new Date('2025-03-25');
 
             const vegetablesList = [12, 13, 14, 15, 16, 17, 18, 28];
@@ -176,7 +177,8 @@ exports.handler = async (event, context) => {
 
             return {
                 statusCode: 201,
-                headers
+                headers,
+                body: JSON.stringify({ message: "Data inserted successfully" })
             };
         }
 
