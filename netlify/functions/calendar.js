@@ -74,6 +74,7 @@ exports.handler = async (event, context) => {
                         days.id,
                         days.date,
                         days.note,
+                        days.cheated,
                         type.name AS type,
                         COALESCE(json_agg(
                             DISTINCT jsonb_build_object('id', symptoms.id, 'name', symptoms.name)
