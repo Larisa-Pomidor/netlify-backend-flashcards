@@ -153,11 +153,11 @@ exports.handler = async (event, context) => {
         else if (event.httpMethod === 'PUT') {
             const id = event.path.split('/').pop();
 
-            const { description } = JSON.parse(event.body);
+            const { description, cheated = false} = JSON.parse(event.body);
 
-            query = `UPDATE days SET note = $1 WHERE id = $2 RETURNING *`;
+            query = `UPDATE days SET note = $1, cheated = $2 WHERE id = $3 RETURNING *`;
 
-            values = [description, id];
+            values = [description, cheated, id];
             const res = await client.query(query, values);
 
             return {
