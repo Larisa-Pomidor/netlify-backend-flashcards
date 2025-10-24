@@ -1,7 +1,7 @@
 [functions]
   node_bundler = "esbuild"
   included_files = ["netlify/functions/**"]
-  runtime = "nodejs18.x"
 
-  [functions."*"]
-    timeout = 10
+[functions."*"]
+  runtime = "nodejs18.x"
+  timeout = 10
