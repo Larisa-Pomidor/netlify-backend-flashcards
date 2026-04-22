@@ -77,17 +77,18 @@ exports.handler = async (event, context) => {
             }
         }
         else if (event.httpMethod === 'PATCH') {
-            const { front, back, image, score, example, pronunciation, id, step } = JSON.parse(event.body);
+            const stepValue = queryParams.step;
+            const { front, back, image, score, example, pronunciation, id } = JSON.parse(event.body);
 
             let query;
             let values;
 
             if (!front && !back) {
                 query = 'UPDATE cards SET score = $2 WHERE id = $1 AND step = $3 RETURNING *';
-                values = [id, score, step];
+                values = [id, score, stepValue];
             } else {
                 query = 'UPDATE cards SET front = $1, back = $2, image_url = $3, score = $4, example = $5, pronunciation = $6 WHERE id = $7 AND step = $8 RETURNING *';
-                values = [front, back, image, score, example, pronunciation, id, step];
+                values = [front, back, image, score, example, pronunciation, id, stepValue];
             }
 
             const res = await client.query(query, values);
@@ -107,14 +108,15 @@ exports.handler = async (event, context) => {
             };
         }
         else if (event.httpMethod === 'POST') {
-            const { front, back, image, score = -1000, example, pronunciation, step } = JSON.parse(event.body);
+            const stepValue = queryParams.step;
+            const { front, back, image, score = -1000, example, pronunciation} = JSON.parse(event.body);
 
             const query = `
                 INSERT INTO cards (front, back, image_url, score, example, pronunciation, step)
                 VALUES ($1, $2, $3, $4, $5, $6, $7)
                 RETURNING *`;
 
-            const values = [front, back, image, score, example, pronunciation, step];
+            const values = [front, back, image, score, example, pronunciation, stepValue];
             const res = await client.query(query, values);
 
             return {
