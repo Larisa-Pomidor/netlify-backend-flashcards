@@ -29,8 +29,10 @@ exports.handler = async (event, context) => {
     try {
         await client.connect();
         console.log("Connected to the database");
+
+        const queryParams = event.queryStringParameters || {};
+
         if (event.httpMethod === 'GET') {
-            const queryParams = event.queryStringParameters || {};
             const stepValue = queryParams.step;
 
             if (queryParams.quantity) {
@@ -38,12 +40,12 @@ exports.handler = async (event, context) => {
 
                 if (queryParams.option === "selected") {
                     result = await client.query(
-                        'SELECT COUNT(*) FROM cards WHERE cards.score < 0 AND step = $1', 
+                        'SELECT COUNT(*) FROM cards WHERE cards.score < 0 AND step = $1',
                         [stepValue]
                     );
                 } else {
                     result = await client.query(
-                        'SELECT COUNT(*) FROM cards WHERE step = $1', 
+                        'SELECT COUNT(*) FROM cards WHERE step = $1',
                         [stepValue]
                     );
                 }
@@ -56,7 +58,7 @@ exports.handler = async (event, context) => {
 
             if (queryParams.option === "selected") {
                 const res = await client.query(
-                    'SELECT * FROM cards WHERE cards.score < 0 AND step = $1', 
+                    'SELECT * FROM cards WHERE cards.score < 0 AND step = $1',
                     [stepValue]
                 );
                 return {
@@ -66,7 +68,7 @@ exports.handler = async (event, context) => {
                 };
             } else {
                 const res = await client.query(
-                    'SELECT * FROM cards WHERE step = $1', 
+                    'SELECT * FROM cards WHERE step = $1',
                     [stepValue]
                 );
                 return {
@@ -109,7 +111,7 @@ exports.handler = async (event, context) => {
         }
         else if (event.httpMethod === 'POST') {
             const stepValue = queryParams.step;
-            const { front, back, image, score = -1000, example, pronunciation} = JSON.parse(event.body);
+            const { front, back, image, score = -1000, example, pronunciation } = JSON.parse(event.body);
 
             const query = `
                 INSERT INTO cards (front, back, image_url, score, example, pronunciation, step)
@@ -127,7 +129,7 @@ exports.handler = async (event, context) => {
         }
 
         else if (event.httpMethod === 'DELETE') {
-            const id = event.path.split('/').pop(); 
+            const id = event.path.split('/').pop();
 
             const res = await client.query('DELETE FROM cards WHERE id = $1 RETURNING *', [id]);
 
